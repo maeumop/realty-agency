@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    volumes:
+      - ./postgres-realty:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: realty
+      POSTGRES_PASSWORD: realty2025
+      POSTGRES_DB: realty
