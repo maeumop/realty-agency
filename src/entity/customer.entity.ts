@@ -26,6 +26,6 @@ export class CustomerModel extends BaseModel {
   @Column()
   note: string;
 
-  @OneToMany(() => CallHistoryModel, (model) => model.customers)
-  callHistories: CallHistoryModel[];
+  @OneToMany(() => CallHistoryModel, (model) => model.customer)
+  calls: CallHistoryModel[];
 }

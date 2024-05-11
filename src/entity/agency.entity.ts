@@ -45,6 +45,6 @@ export class AgencyModel extends BaseModel {
   @Column()
   note: string;
 
-  @ManyToOne(() => MemberModel, (model) => model.uid)
-  members: MemberModel[];
+  @ManyToOne(() => MemberModel, (model) => model.agents)
+  member: MemberModel;
 }

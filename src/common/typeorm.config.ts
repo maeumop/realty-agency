@@ -11,6 +11,7 @@ import { RealtyModel } from 'src/entity/realty/realty.entity';
 import { RealtyStoreModel } from 'src/entity/realty/realty-store.entity';
 import { RealtyTicketModel } from 'src/entity/realty/realty-ticket.entity';
 import { ScheduleModel } from 'src/entity/schedule.entity';
+import { UploadFileModel } from 'src/entity/upload-file.entity';
 
 export const typeOrmConfig = async (
   config: ConfigService,
@@ -33,6 +34,7 @@ export const typeOrmConfig = async (
     RealtyTicketModel,
     ApartRoleModel,
     ScheduleModel,
+    UploadFileModel,
   ],
   synchronize: true,
 });

@@ -18,14 +18,14 @@ export class CallHistoryModel extends BaseModel {
   isDelete: boolean;
 
   // 고객 정보
-  @ManyToOne(() => CustomerModel, (model) => model.uid)
-  customers: CustomerModel[];
+  @ManyToOne(() => CustomerModel, (model) => model.calls)
+  customer: CustomerModel;
 
   // 물건 정보
-  @ManyToOne(() => RealtyModel, (model) => model.uid)
-  realties: RealtyModel[];
+  @ManyToOne(() => RealtyModel, (model) => model.calls)
+  realty: RealtyModel;
 
   // 통화 기록자
-  @ManyToOne(() => MemberModel, (model) => model.uid)
-  members: MemberModel[];
+  @ManyToOne(() => MemberModel, (model) => model.calls)
+  member: MemberModel;
 }

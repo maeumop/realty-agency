@@ -18,6 +18,6 @@ export class ScheduleModel extends BaseModel {
   @IsNotEmpty()
   note: string;
 
-  @ManyToOne(() => MemberModel, (model) => model.schedule)
-  members: MemberModel[];
+  @ManyToOne(() => MemberModel, (model) => model.schedules)
+  member: MemberModel;
 }

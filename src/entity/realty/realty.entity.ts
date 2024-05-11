@@ -14,6 +14,7 @@ import { RealtyApartModel } from './realty-apart.entity';
 import { RealtyHouseModel } from './realty-house.entity';
 import { RealtyStoreModel } from './realty-store.entity';
 import { RealtyTicketModel } from './realty-ticket.entity';
+import { UploadFileModel } from '../upload-file.entity';
 
 // ㄴ 공통 -> 날짜, 금액(보증금/월세), 평형, 물건 부동산(접수), 소유자, 내용, 통화 이력
 // 매물, 전세, 월세, 입주권 정보
@@ -52,8 +53,8 @@ export class RealtyModel extends BaseModel {
   status: SaleStatusRole;
 
   // 물건 등록자
-  @ManyToOne(() => MemberModel, (model) => model.uid)
-  members: MemberModel[];
+  @ManyToOne(() => MemberModel, (model) => model.realties)
+  member: MemberModel;
 
   // 매도자, 임대인
   @ManyToOne(() => CustomerModel, (model) => model.uid)
@@ -64,8 +65,8 @@ export class RealtyModel extends BaseModel {
   agents: AgencyModel[];
 
   // 물건에 대한 통화 기록
-  @OneToMany(() => CallHistoryModel, (model) => model.realties)
-  callHistory: CallHistoryModel;
+  @OneToMany(() => CallHistoryModel, (model) => model.realty)
+  calls: CallHistoryModel[];
 
   @OneToOne(() => RealtyApartModel, (model) => model.realty)
   apart: RealtyApartModel;
@@ -78,4 +79,7 @@ export class RealtyModel extends BaseModel {
 
   @OneToOne(() => RealtyHouseModel, (model) => model.realty)
   house: RealtyHouseModel;
+
+  @OneToMany(() => UploadFileModel, (model) => model.realty)
+  images: UploadFileModel[];
 }

@@ -37,3 +37,8 @@ export enum SaleStatusRole {
   ONGOING, // 계약 진행 중
   BREAK, // 판매 중중단
 }
+
+export enum UploadTypeRole {
+  REALTY,
+  PROFILE,
+}
