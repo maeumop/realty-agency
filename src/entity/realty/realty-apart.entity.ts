@@ -1,6 +1,5 @@
-import { IsNotEmpty } from 'class-validator';
 import { DirectionRole } from 'src/common/constant/enum.constant';
-import { Entity, OneToOne, ManyToOne, Column } from 'typeorm';
+import { Entity, OneToOne, ManyToOne, Column, JoinColumn } from 'typeorm';
 import { ApartRoleModel } from '../apart-role.entity';
 import { RealtyModel } from './realty.entity';
 import { BaseModel } from '../base.entity';
@@ -11,27 +10,23 @@ import { BaseModel } from '../base.entity';
 })
 export class RealtyApartModel extends BaseModel {
   @OneToOne(() => RealtyModel, (model) => model.apart)
+  @JoinColumn()
   realty: RealtyModel;
 
   @ManyToOne(() => ApartRoleModel, (model) => model.aparts)
-  apart: ApartRoleModel;
+  apartRole: ApartRoleModel;
 
   @Column()
-  @IsNotEmpty()
   type: string;
 
   @Column({
     enum: DirectionRole,
-    default: DirectionRole.E,
   })
-  @IsNotEmpty()
   direction: DirectionRole;
 
   @Column()
-  @IsNotEmpty()
   dong: string;
 
   @Column()
-  @IsNotEmpty()
   ho: string;
 }

@@ -1,14 +1,6 @@
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { BaseModel } from './base.entity';
 import { UserRole } from 'src/common/constant/enum.constant';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
-import { Util } from 'src/common/util';
 import { Exclude } from 'class-transformer';
 import { AgencyModel } from './agency.entity';
 import { RealtyModel } from './realty/realty.entity';
@@ -20,24 +12,22 @@ import { UploadFileModel } from './upload-file.entity';
   name: 'member',
 })
 export class MemberModel extends BaseModel {
-  @Column()
-  @IsNotEmpty()
+  @Column({
+    length: 20,
+  })
   userId: string;
 
-  @Column()
-  @IsString({
-    message: (args) => Util.validatorMsg(args),
+  @Column({
+    length: 100,
   })
-  @IsEmail()
-  @IsOptional()
   email: string;
 
-  @Column()
-  @Length(2, 10, {
-    message: (args) => Util.validatorLen(args),
+  @Column({
+    length: 10,
   })
   userName: string;
 
+  @Column()
   @Exclude({
     toPlainOnly: true,
   })
@@ -47,28 +37,19 @@ export class MemberModel extends BaseModel {
     nullable: true,
     length: 11,
   })
-  @Length(10, 11, {
-    message: (args) => Util.validatorLen(args),
-  })
-  @IsOptional()
   personalPhone?: string;
 
   @Column({
     nullable: true,
     length: 11,
   })
-  @Length(10, 11, {
-    message: (args) => Util.validatorLen(args),
-  })
-  @IsOptional()
   officePhone?: string;
 
   @Column({
     nullable: true,
     length: 10,
   })
-  @IsOptional()
-  birthday?: string;
+  birthday: string;
 
   @Column({
     enum: UserRole,
@@ -83,7 +64,7 @@ export class MemberModel extends BaseModel {
   realties: RealtyModel[];
 
   @OneToMany(() => AgencyModel, (model) => model.member)
-  agents: AgencyModel[];
+  agencys: AgencyModel[];
 
   @OneToMany(() => ScheduleModel, (model) => model.member)
   schedules: ScheduleModel[];

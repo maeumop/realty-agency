@@ -1,6 +1,5 @@
-import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { BaseModel } from './base.entity';
-import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { UploadTypeRole } from 'src/common/constant/enum.constant';
 import { join } from 'path';
 import {
@@ -18,14 +17,11 @@ export class UploadFileModel extends BaseModel {
   @Column({
     default: 0,
   })
-  @IsInt()
-  @IsOptional()
   order: number;
 
   @Column({
     enum: UploadTypeRole,
   })
-  @IsEnum(UploadTypeRole)
   type: UploadTypeRole;
 
   @Column()
@@ -40,9 +36,10 @@ export class UploadFileModel extends BaseModel {
   })
   path: string;
 
-  @OneToOne(() => MemberModel, (model) => model.profile)
+  @OneToOne(() => MemberModel, (model) => model.profile, { nullable: true })
+  @JoinColumn()
   member: MemberModel;
 
-  @ManyToOne(() => RealtyModel, (model) => model.images)
+  @ManyToOne(() => RealtyModel, (model) => model.images, { nullable: true })
   realty: RealtyModel;
 }

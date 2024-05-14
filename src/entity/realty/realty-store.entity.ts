@@ -1,6 +1,6 @@
 import { IsNotEmpty, MinLength } from 'class-validator';
 import { Util } from 'src/common/util';
-import { Entity, OneToOne, Column } from 'typeorm';
+import { Entity, OneToOne, Column, JoinColumn } from 'typeorm';
 import { BaseModel } from '../base.entity';
 import { RealtyModel } from './realty.entity';
 
@@ -9,7 +9,8 @@ import { RealtyModel } from './realty.entity';
   name: 'realty_store',
 })
 export class RealtyStoreModel extends BaseModel {
-  @OneToOne(() => RealtyModel, (model) => model.apart)
+  @OneToOne(() => RealtyModel, (model) => model.store)
+  @JoinColumn()
   realty: RealtyModel;
 
   @Column()

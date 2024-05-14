@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -8,11 +9,14 @@ import {
 export abstract class BaseModel {
   @Column()
   @PrimaryGeneratedColumn('uuid')
+  @ApiProperty()
   uid: string;
 
   @CreateDateColumn()
+  @ApiProperty()
   createDate: Date;
 
   @UpdateDateColumn()
+  @ApiProperty()
   updateDate: Date;
 }

@@ -3,9 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterMemberDto } from 'src/dto/register-member.dto';
 import { MemberModel } from 'src/entity/member.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { ResponseDto } from 'src/dto/response.dto';
 
 @Injectable()
 export class MemberService {
@@ -15,28 +13,22 @@ export class MemberService {
     private readonly config: ConfigService,
   ) {}
 
-  async registerMember(body: RegisterMemberDto) {
+  async registerMember(body: RegisterMemberDto, pwd: string) {
     const {
       userId,
       email,
       userName,
-      pwd,
       personalPhone,
       officePhone,
       birthday,
       role,
     } = body;
 
-    const password = await bcrypt.hash(
-      pwd,
-      parseInt(this.config.get('HASH_ROUNDS')),
-    );
-
     const result = await this.repository.save({
       userId,
       email,
       userName,
-      pwd: password,
+      pwd,
       personalPhone,
       officePhone,
       birthday,
@@ -47,18 +39,53 @@ export class MemberService {
       throw new InternalServerErrorException();
     }
 
-    return ResponseDto;
+    return result;
   }
 
-  async editMember(dto: RegisterMemberDto) {
+  async editMember() {
     return true;
   }
 
+  /**
+   * uid를 기준으로 회원 정보를 반환 한다.
+   * @param uid
+   * @returns
+   */
   async getMemberByUid(uid: string) {
-    return true;
+    return await this.repository.findOne({
+      where: {
+        uid,
+      },
+    });
+  }
+
+  /**
+   * user id를 기준으로 회원 정보 반환
+   * @param userId
+   * @returns
+   */
+  async getMemberById(userId: string) {
+    return await this.repository.findOne({
+      where: {
+        userId,
+      },
+    });
   }
 
   async paginateMember() {
     return true;
+  }
+
+  /**
+   * userId 사용여부 반환
+   * @param userId
+   * @returns
+   */
+  async checkUserId(userId: string) {
+    return await this.repository.exists({
+      where: {
+        userId,
+      },
+    });
   }
 }

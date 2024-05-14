@@ -1,5 +1,5 @@
 import { DirectionRole } from 'src/common/constant/enum.constant';
-import { Entity, OneToOne, ManyToOne, Column } from 'typeorm';
+import { Entity, OneToOne, ManyToOne, Column, JoinColumn } from 'typeorm';
 import { ApartRoleModel } from '../apart-role.entity';
 import { BaseModel } from '../base.entity';
 import { RealtyModel } from './realty.entity';
@@ -9,11 +9,12 @@ import { RealtyModel } from './realty.entity';
   name: 'realty_ticket',
 })
 export class RealtyTicketModel extends BaseModel {
-  @OneToOne(() => RealtyModel, (model) => model.apart)
+  @OneToOne(() => RealtyModel, (model) => model.ticket)
+  @JoinColumn()
   realty: RealtyModel;
 
-  @ManyToOne(() => ApartRoleModel, (model) => model.tickets)
-  ticket: ApartRoleModel;
+  @ManyToOne(() => ApartRoleModel, (model) => model.aparts)
+  apartRole: ApartRoleModel;
 
   @Column()
   type: string;

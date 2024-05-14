@@ -1,9 +1,18 @@
 import { ValidationArguments } from 'class-validator';
 
 export class Util {
-  static validatorMsg(args: ValidationArguments) {
-    const { object, property } = args;
-    return `${property} 필드는 ${object} 타입만 수신 가능합니다.`;
+  static validatorMsg(args: ValidationArguments, type?: string) {
+    const { object, property, constraints } = args;
+    const [, ary] = constraints;
+    let msg: string = '';
+
+    if (type === 'enum') {
+      msg = ary.join(', ');
+    } else if (type === 'email') {
+      msg = '이메일';
+    }
+
+    return `${property} 필드는 ${msg} 형식만 수신 가능합니다.`;
   }
 
   static validatorLen(args: ValidationArguments) {

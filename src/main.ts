@@ -10,7 +10,16 @@ async function bootstrap() {
     .setTitle('Realty Agency API')
     .setDescription('공인중개사 사무실 Back Office API')
     .setVersion('1.0.0')
-    .addCookieAuth('connect_sid')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, builder);
@@ -28,6 +37,7 @@ async function bootstrap() {
         // 자동으로 해당 type으로 변경 해준다.
         enableImplicitConversion: true,
       },
+      // forbidNonWhitelisted: true,
     }),
   );
 

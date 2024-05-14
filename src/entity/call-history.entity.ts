@@ -22,7 +22,7 @@ export class CallHistoryModel extends BaseModel {
   customer: CustomerModel;
 
   // 물건 정보
-  @ManyToOne(() => RealtyModel, (model) => model.calls)
+  @ManyToOne(() => RealtyModel, (model) => model.calls, { nullable: true })
   realty: RealtyModel;
 
   // 통화 기록자

@@ -9,7 +9,6 @@ import {
   RealtyTypeRole,
   SaleStatusRole,
 } from 'src/common/constant/enum.constant';
-import { IsInt } from 'class-validator';
 import { RealtyApartModel } from './realty-apart.entity';
 import { RealtyHouseModel } from './realty-house.entity';
 import { RealtyStoreModel } from './realty-store.entity';
@@ -23,15 +22,12 @@ import { UploadFileModel } from '../upload-file.entity';
 })
 export class RealtyModel extends BaseModel {
   @Column()
-  @IsInt()
   amount: number; // 매매금액, 보증금액
 
   @Column()
-  @IsInt()
   rentAmount: number; // 월세액
 
   @Column()
-  @IsInt()
   size: number; // 넓이 m^2
 
   @Column({
@@ -57,12 +53,12 @@ export class RealtyModel extends BaseModel {
   member: MemberModel;
 
   // 매도자, 임대인
-  @ManyToOne(() => CustomerModel, (model) => model.uid)
-  customers: CustomerModel[];
+  @ManyToOne(() => CustomerModel, (model) => model.calls)
+  customer: CustomerModel;
 
   // 물건지 부동산 (null일 경우 자체 물건지)
-  @ManyToOne(() => AgencyModel, (model) => model.uid, { nullable: true })
-  agents: AgencyModel[];
+  @ManyToOne(() => AgencyModel, (model) => model, { nullable: true })
+  agecy: AgencyModel;
 
   // 물건에 대한 통화 기록
   @OneToMany(() => CallHistoryModel, (model) => model.realty)
