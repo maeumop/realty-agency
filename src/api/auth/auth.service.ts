@@ -105,13 +105,15 @@ export class AuthService {
    * @returns
    */
   signToken(
-    member: Pick<MemberModel, 'userId' | 'uid'>,
+    member: Pick<MemberModel, 'userId' | 'userName' | 'uid' | 'office'>,
     isRefresh: boolean = false,
   ) {
     return this.jwtService.sign(
       {
         id: member.userId,
+        name: member.userName,
         uid: member.uid,
+        office: member.office.uid,
         type: isRefresh ? 'refresh' : 'access',
       },
       {
@@ -126,7 +128,9 @@ export class AuthService {
    * @param member
    * @returns
    */
-  getAuthTokens(member: Pick<MemberModel, 'userId' | 'uid'>) {
+  getAuthTokens(
+    member: Pick<MemberModel, 'userId' | 'userName' | 'uid' | 'office'>,
+  ) {
     return {
       accessToken: this.signToken(member),
       refreshToken: this.signToken(member, true),

@@ -6,24 +6,37 @@ import { RealtyModel } from './realty/realty.entity';
 // 거래처 부동산 정보
 @Entity({
   name: 'agency',
+  comment: '거래처 사무실 정보',
 })
 export class AgencyModel extends BaseModel {
-  @Column()
+  @Column({
+    length: 10,
+  })
   ownerName: string;
 
-  @Column()
+  @Column({
+    length: 20,
+  })
   agencyName: string;
 
-  @Column()
+  @Column({
+    length: 13,
+  })
   agencyPhone: string;
 
-  @Column()
+  @Column({
+    length: 5,
+  })
   zipcode: string;
 
-  @Column()
+  @Column({
+    length: 100,
+  })
   address: string;
 
-  @Column()
+  @Column({
+    length: 50,
+  })
   etcAdress: string;
 
   @Column()

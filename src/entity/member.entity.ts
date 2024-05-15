@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { BaseModel } from './base.entity';
 import { UserRole } from 'src/common/constant/enum.constant';
 import { Exclude } from 'class-transformer';
@@ -7,6 +14,8 @@ import { RealtyModel } from './realty/realty.entity';
 import { CallHistoryModel } from './call-history.entity';
 import { ScheduleModel } from './schedule.entity';
 import { UploadFileModel } from './upload-file.entity';
+import { OfficeModel } from './office.entity';
+import { CustomerModel } from './customer.entity';
 
 @Entity({
   name: 'member',
@@ -57,6 +66,10 @@ export class MemberModel extends BaseModel {
   })
   role: UserRole;
 
+  @ManyToOne(() => OfficeModel, (model) => model.members)
+  @JoinColumn()
+  office: OfficeModel;
+
   @OneToMany(() => CallHistoryModel, (model) => model.member)
   calls: CallHistoryModel[];
 
@@ -71,4 +84,7 @@ export class MemberModel extends BaseModel {
 
   @OneToOne(() => UploadFileModel, (model) => model.member)
   profile: UploadFileModel;
+
+  @OneToMany(() => CustomerModel, (model) => model.member)
+  customers: CustomerModel[];
 }

@@ -1,4 +1,11 @@
-import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { BaseModel } from '../base.entity';
 import { MemberModel } from '../member.entity';
 import { CustomerModel } from '../customer.entity';
@@ -14,6 +21,7 @@ import { RealtyHouseModel } from './realty-house.entity';
 import { RealtyStoreModel } from './realty-store.entity';
 import { RealtyTicketModel } from './realty-ticket.entity';
 import { UploadFileModel } from '../upload-file.entity';
+import { OfficeModel } from '../office.entity';
 
 // ㄴ 공통 -> 날짜, 금액(보증금/월세), 평형, 물건 부동산(접수), 소유자, 내용, 통화 이력
 // 매물, 전세, 월세, 입주권 정보
@@ -50,15 +58,23 @@ export class RealtyModel extends BaseModel {
 
   // 물건 등록자
   @ManyToOne(() => MemberModel, (model) => model.realties)
+  @JoinColumn()
   member: MemberModel;
 
   // 매도자, 임대인
   @ManyToOne(() => CustomerModel, (model) => model.calls)
+  @JoinColumn()
   customer: CustomerModel;
 
   // 물건지 부동산 (null일 경우 자체 물건지)
   @ManyToOne(() => AgencyModel, (model) => model, { nullable: true })
+  @JoinColumn()
   agecy: AgencyModel;
+
+  // 부동산 업체 정보
+  @ManyToOne(() => OfficeModel, (model) => model.realties)
+  @JoinColumn()
+  office: OfficeModel;
 
   // 물건에 대한 통화 기록
   @OneToMany(() => CallHistoryModel, (model) => model.realty)

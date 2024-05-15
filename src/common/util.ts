@@ -2,7 +2,7 @@ import { ValidationArguments } from 'class-validator';
 
 export class Util {
   static validatorMsg(args: ValidationArguments, type?: string) {
-    const { object, property, constraints } = args;
+    const { property, constraints } = args;
     const [, ary] = constraints;
     let msg: string = '';
 
@@ -25,6 +25,8 @@ export class Util {
       message = `${message} 필수 항목입니다.`;
     } else if (max > 0) {
       message = `${message} ${min} ~ ${max} 자리 입력 가능합니다.`;
+    } else if (min === max) {
+      message = `${message} ${min} 자리 입력해야 합니다.`;
     } else {
       message = `${message} 최소 ${min}자 이상 입력하여야 합니다.`;
     }

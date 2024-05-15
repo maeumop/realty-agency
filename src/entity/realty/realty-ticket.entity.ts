@@ -16,7 +16,9 @@ export class RealtyTicketModel extends BaseModel {
   @ManyToOne(() => ApartRoleModel, (model) => model.aparts)
   apartRole: ApartRoleModel;
 
-  @Column()
+  @Column({
+    length: 10,
+  })
   type: string;
 
   @Column({

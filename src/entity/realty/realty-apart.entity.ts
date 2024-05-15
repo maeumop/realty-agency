@@ -16,7 +16,9 @@ export class RealtyApartModel extends BaseModel {
   @ManyToOne(() => ApartRoleModel, (model) => model.aparts)
   apartRole: ApartRoleModel;
 
-  @Column()
+  @Column({
+    length: 10,
+  })
   type: string;
 
   @Column({
@@ -24,9 +26,13 @@ export class RealtyApartModel extends BaseModel {
   })
   direction: DirectionRole;
 
-  @Column()
+  @Column({
+    length: 10,
+  })
   dong: string;
 
-  @Column()
+  @Column({
+    length: 10,
+  })
   ho: string;
 }

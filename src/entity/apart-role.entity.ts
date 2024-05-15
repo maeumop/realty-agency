@@ -8,15 +8,21 @@ import { ApiProperty } from '@nestjs/swagger';
   name: 'apart_role',
 })
 export class ApartRoleModel extends BaseModel {
-  @Column()
+  @Column({
+    length: 30,
+  })
   @ApiProperty()
   apartName: string;
 
-  @Column()
+  @Column({
+    length: 5,
+  })
   @ApiProperty()
   zipcode: string;
 
-  @Column()
+  @Column({
+    length: 100,
+  })
   @ApiProperty()
   address: string;
 

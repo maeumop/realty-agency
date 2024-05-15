@@ -12,6 +12,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { UPLOAD_PATH } from './common/constant/path.constant';
 import { RealtyModule } from './api/realty/realty.module';
 import { RoleModule } from './api/role/role.module';
+import { OfficeModule } from './api/office/office.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { RoleModule } from './api/role/role.module';
     AuthModule,
     RealtyModule,
     RoleModule,
+    OfficeModule,
   ],
   controllers: [AppController],
   providers: [

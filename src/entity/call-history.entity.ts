@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { CustomerModel } from './customer.entity';
 import { MemberModel } from './member.entity';
 import { RealtyModel } from './realty/realty.entity';
@@ -19,13 +19,16 @@ export class CallHistoryModel extends BaseModel {
 
   // 고객 정보
   @ManyToOne(() => CustomerModel, (model) => model.calls)
+  @JoinColumn()
   customer: CustomerModel;
 
   // 물건 정보
   @ManyToOne(() => RealtyModel, (model) => model.calls, { nullable: true })
+  @JoinColumn()
   realty: RealtyModel;
 
   // 통화 기록자
   @ManyToOne(() => MemberModel, (model) => model.calls)
+  @JoinColumn()
   member: MemberModel;
 }

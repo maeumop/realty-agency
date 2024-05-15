@@ -24,7 +24,9 @@ export class UploadFileModel extends BaseModel {
   })
   type: UploadTypeRole;
 
-  @Column()
+  @Column({
+    length: 100,
+  })
   @Transform(({ value, obj }) => {
     if (obj.type === UploadTypeRole.PROFILE) {
       return `/${join(PROFILE_URL_PATH, value)}`;

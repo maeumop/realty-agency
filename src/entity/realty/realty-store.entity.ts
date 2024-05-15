@@ -1,5 +1,3 @@
-import { IsNotEmpty, MinLength } from 'class-validator';
-import { Util } from 'src/common/util';
 import { Entity, OneToOne, Column, JoinColumn } from 'typeorm';
 import { BaseModel } from '../base.entity';
 import { RealtyModel } from './realty.entity';
@@ -13,19 +11,23 @@ export class RealtyStoreModel extends BaseModel {
   @JoinColumn()
   realty: RealtyModel;
 
-  @Column()
-  @IsNotEmpty()
+  @Column({
+    length: 30,
+  })
   storeName: string;
 
-  @Column()
-  @MinLength(5, {
-    message: (args) => Util.validatorLen(args),
+  @Column({
+    length: 5,
   })
   zipcode: string;
 
-  @Column()
+  @Column({
+    length: 100,
+  })
   address: string;
 
-  @Column()
+  @Column({
+    length: 50,
+  })
   etcAddress: string;
 }

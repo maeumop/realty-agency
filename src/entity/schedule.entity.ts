@@ -9,7 +9,9 @@ export class ScheduleModel extends BaseModel {
   @Column()
   doDate: Date;
 
-  @Column()
+  @Column({
+    length: 30,
+  })
   title: string;
 
   @Column()
