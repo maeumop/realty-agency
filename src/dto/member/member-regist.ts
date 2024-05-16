@@ -6,6 +6,10 @@ import { Util } from 'src/common/util';
 export class RegisterMemberDto {
   @ApiProperty()
   @IsString()
+  officeUid: string;
+
+  @ApiProperty()
+  @IsString()
   userId: string;
 
   @ApiProperty()

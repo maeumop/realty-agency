@@ -9,6 +9,7 @@ import {
 import { Transform } from 'class-transformer';
 import { MemberModel } from './member.entity';
 import { RealtyModel } from './realty/realty.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({
   name: 'upload_file',
@@ -17,11 +18,13 @@ export class UploadFileModel extends BaseModel {
   @Column({
     default: 0,
   })
+  @ApiProperty()
   order: number;
 
   @Column({
     enum: UploadTypeRole,
   })
+  @ApiProperty()
   type: UploadTypeRole;
 
   @Column({
@@ -36,6 +39,7 @@ export class UploadFileModel extends BaseModel {
 
     return value;
   })
+  @ApiProperty()
   path: string;
 
   @OneToOne(() => MemberModel, (model) => model.profile, { nullable: true })
@@ -43,5 +47,6 @@ export class UploadFileModel extends BaseModel {
   member: MemberModel;
 
   @ManyToOne(() => RealtyModel, (model) => model.images, { nullable: true })
+  @JoinColumn()
   realty: RealtyModel;
 }

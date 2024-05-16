@@ -23,10 +23,10 @@ export class Util {
 
     if (min >= 1 && !value.length) {
       message = `${message} 필수 항목입니다.`;
-    } else if (max > 0) {
-      message = `${message} ${min} ~ ${max} 자리 입력 가능합니다.`;
     } else if (min === max) {
-      message = `${message} ${min} 자리 입력해야 합니다.`;
+      message = `${message} ${min}자리를 입력해야 합니다.`;
+    } else if (max > 0) {
+      message = `${message} ${min} ~ ${max}자리 입력 가능합니다.`;
     } else {
       message = `${message} 최소 ${min}자 이상 입력하여야 합니다.`;
     }

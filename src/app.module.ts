@@ -13,6 +13,7 @@ import { UPLOAD_PATH } from './common/constant/path.constant';
 import { RealtyModule } from './api/realty/realty.module';
 import { RoleModule } from './api/role/role.module';
 import { OfficeModule } from './api/office/office.module';
+import { CommonModule } from './api/common/common.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { OfficeModule } from './api/office/office.module';
     RealtyModule,
     RoleModule,
     OfficeModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [

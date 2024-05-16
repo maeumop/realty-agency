@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ApartRoleRegistDto } from 'src/dto/apart-role-regist.dto';
+import { ApartRoleRegistDto } from 'src/dto/role/apart-role-regist.dto';
 import { ApartRoleModel } from 'src/entity/apart-role.entity';
 import { Repository } from 'typeorm';
 

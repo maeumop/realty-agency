@@ -8,19 +8,21 @@ import {
   HttpStatus,
   Query,
   Get,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiBody, ApiTags, ApiResponse } from '@nestjs/swagger';
-import { RegisterMemberDto } from 'src/dto/register-member.dto';
+import { RegisterMemberDto } from 'src/dto/member/member-regist';
 import {
   CheckUserIdResponseDto,
   LoginResponseDto,
   ReissueAccessTokenResponseDto,
-} from 'src/dto/auth-reponse.dto';
+} from 'src/dto/auth/auth-reponse.dto';
 import { MemberService } from '../member/member.service';
 import { BasicTokenGuard, RefreshTokenGuard } from 'src/guard/token.guard';
 import { PublicAPI } from 'src/decorator/public-api.decorator';
+import { MemberModel } from 'src/entity/member.entity';
 
 @Controller('auth')
 @ApiTags('AUTH')
@@ -43,8 +45,8 @@ export class AuthController {
     description: '회원가입 성공',
     type: LoginResponseDto,
   })
-  async postMember(@Body() body: RegisterMemberDto) {
-    const data = await this.authService.registerMember(body);
+  async postMember(@Body() dto: RegisterMemberDto) {
+    const data = await this.authService.registerMember(dto);
 
     return {
       message: '회원가입 성공',
@@ -64,16 +66,16 @@ export class AuthController {
     description: '로그인 성공',
     type: LoginResponseDto,
   })
-  async postLogin(@Headers('authorization') raw: string) {
-    const token = this.authService.getOnlyToken(raw, true);
-    const { userId, pwd } = this.authService.decodeBasicToken(token);
-
-    const data = await this.authService.login(userId, pwd);
+  async postLogin(@Request() req: Request & { member: MemberModel }) {
+    // 대부분의 처리는 BasicTokenGuard에서 이루어 지고,
+    // 해당 가드에서 처리된 Request에 추가된 member 객체를 참조하여 토큰 생성
+    // BasicTokenGuard를 통과 하지 못하면 오류가 발생한다.
+    const result = this.authService.getAuthTokens(req.member);
 
     return {
       message: '로그인 성공',
       statusCode: HttpStatus.OK,
-      data,
+      data: result,
     };
   }
 

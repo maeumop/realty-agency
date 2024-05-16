@@ -16,6 +16,7 @@ import { ScheduleModel } from './schedule.entity';
 import { UploadFileModel } from './upload-file.entity';
 import { OfficeModel } from './office.entity';
 import { CustomerModel } from './customer.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 @Entity({
   name: 'member',
@@ -24,16 +25,19 @@ export class MemberModel extends BaseModel {
   @Column({
     length: 20,
   })
+  @ApiProperty()
   userId: string;
 
   @Column({
     length: 100,
   })
+  @ApiProperty()
   email: string;
 
   @Column({
     length: 10,
   })
+  @ApiProperty()
   userName: string;
 
   @Column()
@@ -46,24 +50,28 @@ export class MemberModel extends BaseModel {
     nullable: true,
     length: 11,
   })
+  @ApiPropertyOptional()
   personalPhone?: string;
 
   @Column({
     nullable: true,
     length: 11,
   })
+  @ApiPropertyOptional()
   officePhone?: string;
 
   @Column({
     nullable: true,
     length: 10,
   })
+  @ApiProperty()
   birthday: string;
 
   @Column({
     enum: UserRole,
     default: UserRole.MEMBER,
   })
+  @ApiProperty()
   role: UserRole;
 
   @ManyToOne(() => OfficeModel, (model) => model.members)

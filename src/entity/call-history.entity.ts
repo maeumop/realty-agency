@@ -3,6 +3,7 @@ import { CustomerModel } from './customer.entity';
 import { MemberModel } from './member.entity';
 import { RealtyModel } from './realty/realty.entity';
 import { BaseModel } from './base.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 // 물건, 고객 통화 내역 기록
 @Entity({
@@ -10,11 +11,13 @@ import { BaseModel } from './base.entity';
 })
 export class CallHistoryModel extends BaseModel {
   @Column()
+  @ApiProperty()
   comment: string;
 
   @Column({
     default: false,
   })
+  @ApiProperty()
   isDelete: boolean;
 
   // 고객 정보

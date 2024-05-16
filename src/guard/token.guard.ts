@@ -8,6 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthService } from 'src/api/auth/auth.service';
 import { MemberService } from 'src/api/member/member.service';
 import { PUBLIC_API_KEY } from 'src/decorator/public-api.decorator';
+import { OfficeModel } from 'src/entity/office.entity';
 
 @Injectable()
 export class BasicTokenGuard implements CanActivate {
@@ -16,6 +17,7 @@ export class BasicTokenGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const raw = req.headers['authorization'];
+    const officeUid = req.body['officeUid'];
 
     if (!raw) {
       throw new UnauthorizedException('토큰이 없습니다.');
@@ -23,7 +25,13 @@ export class BasicTokenGuard implements CanActivate {
 
     const token = this.authService.getOnlyToken(raw, true);
     const { userId, pwd } = this.authService.decodeBasicToken(token);
-    const member = await this.authService.login(userId, pwd);
+    const member = await this.authService.isExistsMember({
+      userId,
+      pwd,
+      office: {
+        uid: officeUid,
+      } as OfficeModel,
+    });
 
     req.member = member;
 
@@ -59,11 +67,12 @@ export class BearerTokenGuard implements CanActivate {
       }
 
       const token = this.authService.getOnlyToken(raw);
-      const payload = await this.authService.verifyToken(token);
-      const member = await this.memberSerivce.getMemberById(payload.userId);
+      const { officeUid, userId, type } =
+        await this.authService.verifyToken(token);
+      const member = await this.memberSerivce.memberById(officeUid, userId);
 
       req.token = token;
-      req.tokenType = payload.type;
+      req.tokenType = type;
       req.member = member;
     }
 

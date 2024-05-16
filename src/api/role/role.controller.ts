@@ -8,8 +8,8 @@ import {
   ApiTags,
   OmitType,
 } from '@nestjs/swagger';
-import { ResponseDto } from 'src/dto/auth-reponse.dto';
-import { ApartRoleRegistDto } from 'src/dto/apart-role-regist.dto';
+import { ResponseDto } from 'src/dto/auth/auth-reponse.dto';
+import { ApartRoleRegistDto } from 'src/dto/role/apart-role-regist.dto';
 import { ApartRoleModel } from 'src/entity/apart-role.entity';
 
 @Controller('role')

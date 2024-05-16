@@ -62,14 +62,14 @@ export class RealtyModel extends BaseModel {
   member: MemberModel;
 
   // 매도자, 임대인
-  @ManyToOne(() => CustomerModel, (model) => model.calls)
+  @ManyToOne(() => CustomerModel, (model) => model.calls, { nullable: true })
   @JoinColumn()
-  customer: CustomerModel;
+  customer?: CustomerModel;
 
   // 물건지 부동산 (null일 경우 자체 물건지)
-  @ManyToOne(() => AgencyModel, (model) => model, { nullable: true })
+  @ManyToOne(() => AgencyModel, (model) => model.realties, { nullable: true })
   @JoinColumn()
-  agecy: AgencyModel;
+  agency?: AgencyModel;
 
   // 부동산 업체 정보
   @ManyToOne(() => OfficeModel, (model) => model.realties)
@@ -78,20 +78,20 @@ export class RealtyModel extends BaseModel {
 
   // 물건에 대한 통화 기록
   @OneToMany(() => CallHistoryModel, (model) => model.realty)
-  calls: CallHistoryModel[];
+  calls?: CallHistoryModel[];
 
   @OneToOne(() => RealtyApartModel, (model) => model.realty)
-  apart: RealtyApartModel;
+  apart?: RealtyApartModel;
 
   @OneToOne(() => RealtyStoreModel, (model) => model.realty)
-  store: RealtyStoreModel;
+  store?: RealtyStoreModel;
 
   @OneToOne(() => RealtyTicketModel, (model) => model.realty)
-  ticket: RealtyTicketModel;
+  ticket?: RealtyTicketModel;
 
   @OneToOne(() => RealtyHouseModel, (model) => model.realty)
-  house: RealtyHouseModel;
+  house?: RealtyHouseModel;
 
   @OneToMany(() => UploadFileModel, (model) => model.realty)
-  images: UploadFileModel[];
+  images?: UploadFileModel[];
 }

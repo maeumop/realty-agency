@@ -4,7 +4,7 @@ import {
   RealtyTypeRole,
   SaleStatusRole,
 } from 'src/common/constant/enum.constant';
-import { RealtyRegistDto } from 'src/dto/realty-regist.dto';
+import { RealtyRegistDto } from 'src/dto/realty/realty-regist.dto';
 import { RealtyApartModel } from 'src/entity/realty/realty-apart.entity';
 import { RealtyHouseModel } from 'src/entity/realty/realty-house.entity';
 import { RealtyStoreModel } from 'src/entity/realty/realty-store.entity';
@@ -16,7 +16,7 @@ import { QueryRunner, Repository } from 'typeorm';
 export class RealtyService {
   constructor(
     @InjectRepository(RealtyModel)
-    private readonly repoRealty: Repository<RealtyModel>,
+    private readonly repository: Repository<RealtyModel>,
     @InjectRepository(RealtyApartModel)
     private readonly repoApart: Repository<RealtyApartModel>,
     @InjectRepository(RealtyHouseModel)
@@ -32,15 +32,20 @@ export class RealtyService {
     dto.status = dto.status ?? SaleStatusRole.STANDBY;
 
     const realty = await qr.manager.save(RealtyModel, {
-      ...dto,
+      amount: dto.amount,
+      rentAmount: dto.rentAmount,
+      size: dto.size,
+      sellRole: dto.sellRole,
+      typeRole: dto.typeRole,
+      office: {
+        uid: dto.officeUid,
+      },
       member: {
         uid: memberUid,
       },
     });
 
-    const uid = realty.uid;
-
-    console.log(realty);
+    const { uid } = realty;
 
     let etc: any;
 
@@ -81,6 +86,9 @@ export class RealtyService {
 
       etc = await qr.manager.save(RealtyTicketModel, {
         ...dto.ticket,
+        apartRole: {
+          uid: dto.apart.apartRoleUid,
+        },
         realty: { uid },
       });
     }
@@ -92,5 +100,30 @@ export class RealtyService {
       store: dto.typeRole === RealtyTypeRole.STORE ? etc : undefined,
       ticker: dto.typeRole === RealtyTypeRole.TICKET ? etc : undefined,
     };
+  }
+
+  async realtyList() {
+    return await this.repository.find({
+      order: {
+        createDate: 'DESC',
+      },
+      select: {
+        member: {
+          uid: true,
+          userName: true,
+        },
+        agency: {
+          agencyName: true,
+        },
+      },
+      relations: {
+        member: true,
+        apart: true,
+        house: true,
+        store: true,
+        ticket: true,
+        agency: true,
+      },
+    });
   }
 }

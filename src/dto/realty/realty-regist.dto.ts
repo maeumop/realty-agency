@@ -97,6 +97,12 @@ export class RealtyHouseDto {
 
 export class RealtyRegistDto {
   @ApiProperty({
+    description: '부동산 사무실 uid',
+  })
+  @IsString()
+  officeUid: string;
+
+  @ApiProperty({
     description: '매매금액, 보증금액 (백만원 단위)',
   })
   @IsInt()

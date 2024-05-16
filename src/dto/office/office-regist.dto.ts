@@ -8,7 +8,7 @@ export class OfficeRegistDto {
   })
   @IsString()
   @Length(6, 12, {
-    message: (args) => Util.validatorLen(args),
+    message: Util.validatorLen,
   })
   officeId: string;
 
@@ -16,7 +16,9 @@ export class OfficeRegistDto {
     description: '사업자 등록 번호',
   })
   @IsString()
-  @Length(11, 11, {})
+  @Length(10, 10, {
+    message: Util.validatorLen,
+  })
   bizNumber: string;
 
   @ApiProperty({
@@ -24,7 +26,7 @@ export class OfficeRegistDto {
   })
   @IsString()
   @Length(5, 5, {
-    message: (args) => Util.validatorLen(args),
+    message: Util.validatorLen,
   })
   zipcode: string;
 
@@ -56,11 +58,17 @@ export class OfficeRegistDto {
     description: '서비스 시작일',
     nullable: true,
   })
+  @Length(10, 10, {
+    message: Util.validatorLen,
+  })
   serviceStart?: string;
 
   @ApiPropertyOptional({
     description: '서비스 종료일',
     nullable: true,
+  })
+  @Length(10, 10, {
+    message: Util.validatorLen,
   })
   serviceEnd?: string;
 }

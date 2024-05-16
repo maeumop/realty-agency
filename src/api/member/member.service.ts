@@ -1,9 +1,15 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RegisterMemberDto } from 'src/dto/register-member.dto';
 import { MemberModel } from 'src/entity/member.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { RegisterMemberDto } from 'src/dto/member/member-regist';
+import { MemberUpdateDto } from 'src/dto/member/member-update.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class MemberService {
@@ -15,6 +21,7 @@ export class MemberService {
 
   async registerMember(body: RegisterMemberDto, pwd: string) {
     const {
+      officeUid,
       userId,
       email,
       userName,
@@ -33,6 +40,9 @@ export class MemberService {
       officePhone,
       birthday,
       role,
+      office: {
+        uid: officeUid,
+      },
     });
 
     if (!result) {
@@ -51,29 +61,43 @@ export class MemberService {
    * @param uid
    * @returns
    */
-  async getMemberByUid(uid: string) {
+  async memberByUid(officeUid: string, uid: string) {
     return await this.repository.findOne({
       where: {
         uid,
+        office: {
+          uid: officeUid,
+        },
       },
     });
   }
 
   /**
    * user id를 기준으로 회원 정보 반환
+   * @param officeUid
    * @param userId
    * @returns
    */
-  async getMemberById(userId: string) {
+  async memberById(officeUid: string, userId: string) {
     return await this.repository.findOne({
       where: {
         userId,
+        office: {
+          uid: officeUid,
+        },
+      },
+      relations: {
+        office: true,
       },
     });
   }
 
-  async paginateMember() {
-    return true;
+  async memberList() {
+    return await this.repository.find({
+      order: {
+        createDate: 'DESC',
+      },
+    });
   }
 
   /**
@@ -87,5 +111,35 @@ export class MemberService {
         userId,
       },
     });
+  }
+
+  /**
+   * 회원 정보 업데이트
+   * @param officeUid
+   * @param uid
+   * @param dto
+   */
+  async memberUpdate(officeUid: string, uid: string, dto: MemberUpdateDto) {
+    const member = await this.repository.findOne({
+      where: {
+        uid,
+      },
+    });
+
+    if (!member) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+    }
+
+    member.email = dto.email ?? member.email;
+    member.officePhone = dto.officePhone ?? member.officePhone;
+    member.personalPhone = dto.personalPhone ?? member.personalPhone;
+    member.birthday = dto.birthday ?? member.birthday;
+    member.pwd = dto.pwd
+      ? await bcrypt.hash(dto.pwd, parseInt(this.config.get('HASH_ROUNDS')))
+      : member.pwd;
+
+    const result = await this.repository.save(member);
+
+    return result;
   }
 }

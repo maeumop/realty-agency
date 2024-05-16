@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OfficeRegistDto } from 'src/dto/office-regist.dto';
+import { OfficeRegistDto } from 'src/dto/office/office-regist.dto';
 import { OfficeModel } from 'src/entity/office.entity';
 import { Repository } from 'typeorm';
 
@@ -11,5 +11,15 @@ export class OfficeService {
     private readonly repository: Repository<OfficeModel>,
   ) {}
 
-  async officeRegist(dto: OfficeRegistDto) {}
+  async officeRegist(dto: OfficeRegistDto) {
+    return this.repository.save(dto);
+  }
+
+  async officeList() {
+    return this.repository.find({
+      order: {
+        createDate: 'DESC',
+      },
+    });
+  }
 }

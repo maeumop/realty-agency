@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { DecodeBasicToken } from 'src/type/auth';
 import { MemberModel } from 'src/entity/member.entity';
 import * as bcrypt from 'bcrypt';
-import { RegisterMemberDto } from 'src/dto/register-member.dto';
+import { RegisterMemberDto } from 'src/dto/member/member-regist';
 
 @Injectable()
 export class AuthService {
@@ -137,25 +137,23 @@ export class AuthService {
     };
   }
 
-  /**
-   * 사용자 로그인, token 발행
-   * @param member
-   * @returns
-   */
-  async login(userId: string, pwd: string) {
-    const result = await this.memberService.getMemberById(userId);
+  async isExistsMember(member: Pick<MemberModel, 'office' | 'userId' | 'pwd'>) {
+    const model = await this.memberService.memberById(
+      member.office.uid,
+      member.userId,
+    );
 
-    if (!result) {
+    if (!model) {
       throw new UnauthorizedException('존재하지 않는 사용자 입니다.');
     }
 
-    const isPass = await bcrypt.compare(pwd, result.pwd);
+    const isPass = await bcrypt.compare(member.pwd, model.pwd);
 
     if (!isPass) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
 
-    return this.getAuthTokens(result);
+    return model;
   }
 
   /**
