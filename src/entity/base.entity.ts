@@ -9,7 +9,9 @@ import {
 export abstract class BaseModel {
   @Column()
   @PrimaryGeneratedColumn('uuid')
-  @ApiProperty()
+  @ApiProperty({
+    example: 'b8e758b9-a9b8-4d09-b826-6d2213e5fbb7',
+  })
   uid: string;
 
   @CreateDateColumn()

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BasePaginateDto } from 'src/dto/paginate.dto';
+import { BasePaginateDto, PaginateDataDto } from 'src/dto/paginate.dto';
 import { BaseModel } from 'src/entity/base.entity';
 import {
   Repository,
@@ -17,8 +17,7 @@ export class CommonService {
     dto: BasePaginateDto<T>,
     repository: Repository<T>,
     overrideOptions: FindManyOptions<T> = {},
-    path: string,
-  ) {
+  ): Promise<PaginateDataDto<T>> {
     let options: FindManyOptions<T> = {};
     const where: FindOptionsWhere<T> = {};
     const order: FindOptionsOrder<T> = {};
@@ -46,42 +45,22 @@ export class CommonService {
       ...overrideOptions,
     };
 
-    const [data, total] = await repository.findAndCount(options);
+    const [paginate, total] = await repository.findAndCount(options);
 
     let lastRecord;
-    let nextUrl;
 
     if (!dto.page) {
-      const { HTTP_HOST, HTTP_PROTOCOL } = process.env;
-
       lastRecord =
-        data.length && data.length === dto.take ? data[data.length - 1] : null;
-
-      if (lastRecord) {
-        nextUrl = new URL(`${HTTP_PROTOCOL}://${HTTP_HOST}/${path}`);
-      }
-
-      if (nextUrl) {
-        for (const key of Object.keys(dto)) {
-          if (dto[key]) {
-            nextUrl.searchParams.append(key, dto[key]);
-          }
-
-          if (lastRecord && !nextUrl.searchParams.has('lastId')) {
-            nextUrl.searchParams.append('lastId', lastRecord.id.toString());
-          }
-        }
-      }
+        paginate.length && paginate.length === dto.take
+          ? paginate[paginate.length - 1]
+          : null;
     }
 
     return {
-      data: data,
-      cursor: {
-        after: lastRecord && lastRecord.id,
-      },
-      count: data.length,
+      paginate,
+      cursor: lastRecord && lastRecord.id,
+      count: paginate.length,
       total,
-      next: nextUrl?.toString() ?? null,
     };
   }
 }

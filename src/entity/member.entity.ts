@@ -31,7 +31,9 @@ export class MemberModel extends BaseModel {
   @Column({
     length: 100,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 'username@example.com',
+  })
   email: string;
 
   @Column({
@@ -50,28 +52,36 @@ export class MemberModel extends BaseModel {
     nullable: true,
     length: 11,
   })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    example: '010-1234-5678',
+  })
   personalPhone?: string;
 
   @Column({
     nullable: true,
     length: 11,
   })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    example: '010-1234-5678',
+  })
   officePhone?: string;
 
   @Column({
     nullable: true,
     length: 10,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: '2020-09-09',
+  })
   birthday: string;
 
   @Column({
     enum: UserRole,
     default: UserRole.MEMBER,
   })
-  @ApiProperty()
+  @ApiProperty({
+    enum: Object.values(UserRole),
+  })
   role: UserRole;
 
   @ManyToOne(() => OfficeModel, (model) => model.members)

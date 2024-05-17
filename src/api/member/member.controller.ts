@@ -8,11 +8,16 @@ import {
   Query,
 } from '@nestjs/common';
 import { MemberService } from './member.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MemberModel } from 'src/entity/member.entity';
-import { MemberListResponseDto } from 'src/dto/member/member-list.dto';
 import { Jwt } from 'src/decorator/jwt.decorator';
 import { MemberUpdateDto } from 'src/dto/member/member-update.dto';
+import { BasePaginateDto } from 'src/dto/paginate.dto';
+import {
+  ApiBaseResponse,
+  ApiPaginateResponse,
+} from 'src/decorator/api-response.decorator';
+import { MemberListResponseDto } from 'src/dto/member/member-list.dto';
 
 @Controller('member')
 @ApiTags('MEMBER')
@@ -23,12 +28,9 @@ export class MemberController {
   @ApiOperation({
     description: '회원 목록',
   })
-  @ApiResponse({
-    description: '회원 목록 호출 성공',
-    type: [MemberListResponseDto],
-  })
-  async getMemberList() {
-    const result = this.memberService.memberList();
+  @ApiPaginateResponse(MemberListResponseDto, '회원 목록 호출 성공')
+  async getMemberList(@Query() dto: BasePaginateDto<MemberModel>) {
+    const result = await this.memberService.memberList(dto);
 
     return {
       message: '회원 목록 호출 성공',
@@ -41,14 +43,12 @@ export class MemberController {
   @ApiOperation({
     description: '회원 상세 정보',
   })
-  @ApiResponse({
-    type: MemberModel,
-  })
+  @ApiBaseResponse(MemberModel, '회원 상세 정보 호출 성공')
   async getMember(
     @Jwt('officeUid') officeUid: string,
     @Param('uid') uid: string,
   ) {
-    const result = this.memberService.memberByUid(officeUid, uid);
+    const result = await this.memberService.memberByUid(officeUid, uid);
 
     return {
       message: '회원 상세 정보 호출 성공',
@@ -61,14 +61,14 @@ export class MemberController {
   @ApiOperation({
     description: '회원 정보 수정',
   })
-  async patchMember(
-    @Jwt('officeUid') officeUid: string,
-    @Param('uid') uid: string,
-    @Body() dto: MemberUpdateDto,
-  ) {
+  @ApiBaseResponse(MemberModel, '회원 정보 수정 성공')
+  async patchMember(@Param('uid') uid: string, @Body() dto: MemberUpdateDto) {
+    const result = await this.memberService.memberUpdate(uid, dto);
+
     return {
       message: '회원 정보 수정 성공',
       statusCode: HttpStatus.OK,
+      data: result,
     };
   }
 }

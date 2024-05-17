@@ -8,6 +8,7 @@ import { RealtyHouseModel } from 'src/entity/realty/realty-house.entity';
 import { RealtyTicketModel } from 'src/entity/realty/realty-ticket.entity';
 import { RealtyStoreModel } from 'src/entity/realty/realty-store.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
       RealtyTicketModel,
       RealtyStoreModel,
     ]),
+    CommonModule,
   ],
   controllers: [RealtyController],
   providers: [RealtyService],

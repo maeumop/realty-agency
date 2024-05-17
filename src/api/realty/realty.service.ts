@@ -11,6 +11,8 @@ import { RealtyStoreModel } from 'src/entity/realty/realty-store.entity';
 import { RealtyTicketModel } from 'src/entity/realty/realty-ticket.entity';
 import { RealtyModel } from 'src/entity/realty/realty.entity';
 import { QueryRunner, Repository } from 'typeorm';
+import { CommonService } from '../common/common.service';
+import { BasePaginateDto } from 'src/dto/paginate.dto';
 
 @Injectable()
 export class RealtyService {
@@ -25,6 +27,7 @@ export class RealtyService {
     private readonly repoStore: Repository<RealtyStoreModel>,
     @InjectRepository(RealtyTicketModel)
     private readonly repoTicket: Repository<RealtyTicketModel>,
+    private readonly commonSerivce: CommonService,
   ) {}
 
   async registRealty(memberUid: string, dto: RealtyRegistDto, qr: QueryRunner) {
@@ -102,28 +105,18 @@ export class RealtyService {
     };
   }
 
-  async realtyList() {
-    return await this.repository.find({
-      order: {
-        createDate: 'DESC',
-      },
-      select: {
-        member: {
-          uid: true,
-          userName: true,
-        },
-        agency: {
-          agencyName: true,
+  async realtyList(dto: BasePaginateDto<RealtyModel>) {
+    return await this.commonSerivce.paginate<RealtyModel>(
+      dto,
+      this.repository,
+      {
+        relations: {
+          apart: true,
+          house: true,
+          store: true,
+          ticket: true,
         },
       },
-      relations: {
-        member: true,
-        apart: true,
-        house: true,
-        store: true,
-        ticket: true,
-        agency: true,
-      },
-    });
+    );
   }
 }

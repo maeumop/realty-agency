@@ -10,6 +10,8 @@ import { ConfigService } from '@nestjs/config';
 import { RegisterMemberDto } from 'src/dto/member/member-regist';
 import { MemberUpdateDto } from 'src/dto/member/member-update.dto';
 import * as bcrypt from 'bcrypt';
+import { BasePaginateDto } from 'src/dto/paginate.dto';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class MemberService {
@@ -17,6 +19,7 @@ export class MemberService {
     @InjectRepository(MemberModel)
     private readonly repository: Repository<MemberModel>,
     private readonly config: ConfigService,
+    private readonly commonSerivce: CommonService,
   ) {}
 
   async registerMember(body: RegisterMemberDto, pwd: string) {
@@ -50,10 +53,6 @@ export class MemberService {
     }
 
     return result;
-  }
-
-  async editMember() {
-    return true;
   }
 
   /**
@@ -92,12 +91,17 @@ export class MemberService {
     });
   }
 
-  async memberList() {
-    return await this.repository.find({
-      order: {
-        createDate: 'DESC',
-      },
-    });
+  /**
+   * 회원 목록
+   * @param dto BasePaginateDto<MemberModel>
+   * @returns
+   */
+  async memberList(dto: BasePaginateDto<MemberModel>) {
+    try {
+      return this.commonSerivce.paginate<MemberModel>(dto, this.repository);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   /**
@@ -115,11 +119,10 @@ export class MemberService {
 
   /**
    * 회원 정보 업데이트
-   * @param officeUid
    * @param uid
    * @param dto
    */
-  async memberUpdate(officeUid: string, uid: string, dto: MemberUpdateDto) {
+  async memberUpdate(uid: string, dto: MemberUpdateDto) {
     const member = await this.repository.findOne({
       where: {
         uid,
