@@ -76,31 +76,31 @@ export class RealtyListDto {
     description: '물건 등록자 정보',
     type: RealtyListMemberDto,
   })
-  member: MemberModel;
+  member: RealtyListMemberDto;
 
   @ApiPropertyOptional({
     description: '매도자, 임대인 정보',
     type: RealtyListCustomerDto,
   })
-  customer?: CustomerModel;
+  customer?: RealtyListCustomerDto;
 
   @ApiPropertyOptional({
     description: '물건지 부동산 정보 (null일 경우 자체 물건지)',
     type: RealtyListAgencyDto,
   })
-  agency?: AgencyModel;
+  agency?: RealtyListAgencyDto;
 
   @ApiPropertyOptional({
     description: '부동산 업체 정보',
     type: RealtyListOfficeDto,
   })
-  office: OfficeModel;
+  office: RealtyListOfficeDto;
 
   @ApiPropertyOptional({
     description: '물건에 대한 통화 기록',
     type: RealtyListCallHistoryDto,
   })
-  calls?: CallHistoryModel[];
+  calls?: RealtyListCallHistoryDto[];
 
   @ApiPropertyOptional()
   apart?: RealtyApartModel;

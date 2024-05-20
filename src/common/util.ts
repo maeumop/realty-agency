@@ -33,4 +33,8 @@ export class Util {
 
     return message;
   }
+
+  // static objectKeys<T>(obj: object): keyof T {
+  //   return Object.keys(obj);
+  // }
 }

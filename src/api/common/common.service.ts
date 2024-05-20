@@ -57,10 +57,10 @@ export class CommonService {
     }
 
     return {
-      paginate,
       cursor: lastRecord && lastRecord.id,
       count: paginate.length,
       total,
+      paginate,
     };
   }
 }

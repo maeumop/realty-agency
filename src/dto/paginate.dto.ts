@@ -3,6 +3,10 @@ import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { BaseModel } from 'src/entity/base.entity';
 import { FindOptionsOrderValue } from 'typeorm';
 
+/**
+ * <T extends BaseModel> 제네릭으로 orderField의 형식을 keyof T 처리 하려 했으나,
+ * Swagger에서 인식 못하는 현상으로 인해 string type으로 지정
+ */
 export class BasePaginateDto<T extends BaseModel> {
   @ApiPropertyOptional()
   @IsNumber()
@@ -22,9 +26,11 @@ export class BasePaginateDto<T extends BaseModel> {
   @IsOptional()
   order?: FindOptionsOrderValue = 'DESC';
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: '정렬 가능한 필드명',
+  })
   @IsOptional()
-  orderField?: keyof T;
+  orderField?: string;
 
   @ApiPropertyOptional({
     default: 20,

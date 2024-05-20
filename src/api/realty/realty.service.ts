@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   RealtyTypeRole,
@@ -13,6 +17,7 @@ import { RealtyModel } from 'src/entity/realty/realty.entity';
 import { QueryRunner, Repository } from 'typeorm';
 import { CommonService } from '../common/common.service';
 import { BasePaginateDto } from 'src/dto/paginate.dto';
+import { RealtyUpdateDto } from 'src/dto/realty/realty-update.dto';
 
 @Injectable()
 export class RealtyService {
@@ -30,6 +35,13 @@ export class RealtyService {
     private readonly commonSerivce: CommonService,
   ) {}
 
+  /**
+   * 매물 등록
+   * @param memberUid
+   * @param dto
+   * @param qr
+   * @returns
+   */
   async registRealty(memberUid: string, dto: RealtyRegistDto, qr: QueryRunner) {
     dto.rentAmount = dto.rentAmount ?? 0;
     dto.status = dto.status ?? SaleStatusRole.STANDBY;
@@ -101,22 +113,142 @@ export class RealtyService {
       apart: dto.typeRole === RealtyTypeRole.APART ? etc : undefined,
       house: dto.typeRole === RealtyTypeRole.HOUSE ? etc : undefined,
       store: dto.typeRole === RealtyTypeRole.STORE ? etc : undefined,
-      ticker: dto.typeRole === RealtyTypeRole.TICKET ? etc : undefined,
+      ticket: dto.typeRole === RealtyTypeRole.TICKET ? etc : undefined,
     };
   }
 
+  /**
+   * 부동산 매물 목록
+   * @param dto
+   * @returns
+   */
   async realtyList(dto: BasePaginateDto<RealtyModel>) {
-    return await this.commonSerivce.paginate<RealtyModel>(
+    const result = await this.commonSerivce.paginate<RealtyModel>(
       dto,
       this.repository,
       {
+        select: {
+          member: {
+            uid: true,
+            userName: true,
+          },
+        },
         relations: {
           apart: true,
           house: true,
           store: true,
           ticket: true,
+          member: true,
         },
       },
     );
+
+    result.paginate = result.paginate.map((item) => {
+      item.apart =
+        item.typeRole === RealtyTypeRole.APART ? item.apart : undefined;
+      item.ticket =
+        item.typeRole === RealtyTypeRole.TICKET ? item.ticket : undefined;
+      item.house =
+        item.typeRole === RealtyTypeRole.HOUSE ? item.house : undefined;
+      item.store =
+        item.typeRole === RealtyTypeRole.STORE ? item.store : undefined;
+
+      return item;
+    });
+
+    return result;
+  }
+
+  /**
+   * 부동산 매물 상세 정보 수정
+   * @param uid
+   * @returns
+   */
+  async realtyDetail(uid: string) {
+    const result = await this.repository.findOne({
+      select: {
+        member: {
+          uid: true,
+          userName: true,
+        },
+      },
+      where: {
+        uid,
+      },
+      relations: {
+        apart: true,
+        house: true,
+        store: true,
+        ticket: true,
+        member: true,
+      },
+    });
+
+    result.apart =
+      result.typeRole === RealtyTypeRole.APART ? result.apart : undefined;
+    result.ticket =
+      result.typeRole === RealtyTypeRole.TICKET ? result.ticket : undefined;
+    result.house =
+      result.typeRole === RealtyTypeRole.HOUSE ? result.house : undefined;
+    result.store =
+      result.typeRole === RealtyTypeRole.STORE ? result.store : undefined;
+
+    return result;
+  }
+
+  /**
+   * 부동산 매물 정보 업데이트
+   * @param uid
+   * @param dto
+   * @returns
+   */
+  async updateRealty(uid: string, dto: RealtyUpdateDto) {
+    console.log(uid);
+    const result = await this.repository.findOne({
+      where: {
+        uid,
+      },
+      relations: {
+        apart: dto.typeRole === RealtyTypeRole.APART ? true : false,
+        house: dto.typeRole === RealtyTypeRole.HOUSE ? true : false,
+        store: dto.typeRole === RealtyTypeRole.STORE ? true : false,
+        ticket: dto.typeRole === RealtyTypeRole.TICKET ? true : false,
+      },
+    });
+
+    if (!result) {
+      throw new NotFoundException('해당 매물 정보를 찾을 수 없습니다.');
+    }
+
+    result.uid = uid;
+    result.amount = dto.amount ?? result.amount;
+    result.rentAmount = dto.rentAmount ?? result.rentAmount;
+    result.size = dto.size ?? result.size;
+    result.sellRole = dto.sellRole ?? result.sellRole;
+    result.status = dto.status ?? result.status;
+
+    if (dto.typeRole === RealtyTypeRole.APART) {
+      result.apart.type = dto.apart.type ?? result.apart.type;
+      result.apart.direction = dto.apart.direction ?? result.apart.direction;
+      result.apart.dong = dto.apart.dong ?? result.apart.dong;
+      result.apart.ho = dto.apart.ho ?? result.apart.ho;
+    } else if (dto.typeRole === RealtyTypeRole.HOUSE) {
+      result.house.type = dto.house.type ?? result.house.type;
+      result.house.zipcode = dto.house.zipcode ?? result.house.zipcode;
+      result.house.address = dto.house.address ?? result.house.address;
+      result.house.etcAddress = dto.house.etcAddress ?? result.house.etcAddress;
+    } else if (dto.typeRole === RealtyTypeRole.STORE) {
+      result.store.storeName = dto.store.storeName ?? result.store.storeName;
+      result.store.zipcode = dto.store.zipcode ?? result.store.zipcode;
+      result.store.address = dto.store.address ?? result.store.address;
+      result.store.etcAddress = dto.store.etcAddress ?? result.store.etcAddress;
+    } else if (dto.typeRole === RealtyTypeRole.TICKET) {
+      result.ticket.type = dto.ticket.type ?? result.ticket.type;
+      result.ticket.direction = dto.ticket.direction ?? result.ticket.direction;
+    }
+
+    const newResult = await this.repository.save(result);
+
+    return newResult;
   }
 }
