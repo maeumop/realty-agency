@@ -4,23 +4,22 @@ import {
   Delete,
   Get,
   HttpStatus,
+  NotFoundException,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import {
-  ApiBearerAuth,
-  ApiHeader,
   ApiOkResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
   OmitType,
 } from '@nestjs/swagger';
 import { ResponseDto } from 'src/dto/auth/auth-reponse.dto';
 import { ApartRoleRegistDto } from 'src/dto/role/apart-role-regist.dto';
 import { ApartRoleModel } from 'src/entity/apart-role.entity';
-import { STATUS_CODES } from 'http';
+import { ApartRoleUpdateDto } from 'src/dto/role/apart-role-update.dto';
 
 @Controller('role')
 @ApiTags('ROLE')
@@ -36,7 +35,7 @@ export class RoleController {
     type: [OmitType(ApartRoleModel, ['createDate', 'updateDate'])],
   })
   async getApart() {
-    const result = await this.roleService.apartRoleList();
+    const result = await this.roleService.roleListApart();
 
     return {
       message: '아파트 목록 호출 성공',
@@ -54,10 +53,34 @@ export class RoleController {
     type: ResponseDto,
   })
   async postApart(@Body() dto: ApartRoleRegistDto) {
-    await this.roleService.apartRoleRegist(dto);
+    await this.roleService.registApartRole(dto);
 
     return {
       message: '아파트 등록 성공',
+      statusCode: HttpStatus.OK,
+    };
+  }
+
+  @Patch('aprt/:uid')
+  @ApiOperation({
+    summary: '아파트 단지명 수정 (이름만)',
+  })
+  @ApiOkResponse({
+    description: '아파트 단지명 수정 성공',
+    type: ResponseDto,
+  })
+  async patchApart(
+    @Param('uid') uid: string,
+    @Body() body: ApartRoleUpdateDto,
+  ) {
+    const result = this.roleService.updateApartRole(uid, body.apartName);
+
+    if (!result) {
+      throw new NotFoundException();
+    }
+
+    return {
+      message: '아파트 단지 수정 성공',
       statusCode: HttpStatus.OK,
     };
   }
@@ -71,7 +94,7 @@ export class RoleController {
   })
   async deleteApart(@Param('uid') uid: string) {
     try {
-      await this.roleService.apartDelete(uid);
+      await this.roleService.deleteApartRole(uid);
 
       return {
         message: 'okay',

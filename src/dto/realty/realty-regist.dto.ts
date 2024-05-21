@@ -95,6 +95,16 @@ export class RealtyHouseDto {
   etcAddress: string;
 }
 
+export class RealtyUploadImageDto {
+  @ApiProperty()
+  @IsString()
+  path: string;
+
+  @ApiProperty()
+  @IsInt()
+  size: number;
+}
+
 export class RealtyRegistDto {
   @ApiProperty({
     description: '부동산 사무실 uid',
@@ -164,4 +174,11 @@ export class RealtyRegistDto {
   @ApiPropertyOptional()
   @IsOptional()
   house?: RealtyHouseDto;
+
+  @ApiPropertyOptional({
+    description: '임시 저장된 파일의 정보',
+    type: [RealtyUploadImageDto],
+  })
+  @IsOptional()
+  images?: RealtyUploadImageDto[];
 }

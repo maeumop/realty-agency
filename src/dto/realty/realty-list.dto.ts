@@ -21,33 +21,33 @@ import { UploadFileModel } from 'src/entity/upload-file.entity';
  * 아래와 같이 class를 따로 지정하여 구성해준다.
  */
 
-export class RealtyListMemberDto extends PickType(MemberModel, [
+export class RealtyItemMemberDto extends PickType(MemberModel, [
   'uid',
   'userName',
 ]) {}
-export class RealtyListCustomerDto extends PickType(CustomerModel, [
+export class RealtyItemCustomerDto extends PickType(CustomerModel, [
   'uid',
   'name',
 ]) {}
-export class RealtyListAgencyDto extends PickType(AgencyModel, [
+export class RealtyItemAgencyDto extends PickType(AgencyModel, [
   'uid',
   'agencyName',
 ]) {}
-export class RealtyListOfficeDto extends PickType(OfficeModel, [
+export class RealtyItemOfficeDto extends PickType(OfficeModel, [
   'uid',
   'officeName',
 ]) {}
-export class RealtyListCallHistoryDto extends PickType(CallHistoryModel, [
+export class RealtyItemCallHistoryDto extends PickType(CallHistoryModel, [
   'uid',
   'comment',
 ]) {}
-export class RealtyListImageDto extends PickType(UploadFileModel, [
+export class RealtyItemImageDto extends PickType(UploadFileModel, [
   'uid',
   'path',
-  'type',
+  'fileSize',
 ]) {}
 
-export class RealtyListDto {
+export class RealtyItemDto {
   @ApiProperty()
   amount: number; // 매매금액, 보증금액
 
@@ -74,33 +74,33 @@ export class RealtyListDto {
 
   @ApiProperty({
     description: '물건 등록자 정보',
-    type: RealtyListMemberDto,
+    type: RealtyItemMemberDto,
   })
-  member: RealtyListMemberDto;
+  member: RealtyItemMemberDto;
 
   @ApiPropertyOptional({
     description: '매도자, 임대인 정보',
-    type: RealtyListCustomerDto,
+    type: RealtyItemCustomerDto,
   })
-  customer?: RealtyListCustomerDto;
+  customer?: RealtyItemCustomerDto;
 
   @ApiPropertyOptional({
     description: '물건지 부동산 정보 (null일 경우 자체 물건지)',
-    type: RealtyListAgencyDto,
+    type: RealtyItemAgencyDto,
   })
-  agency?: RealtyListAgencyDto;
+  agency?: RealtyItemAgencyDto;
 
   @ApiPropertyOptional({
     description: '부동산 업체 정보',
-    type: RealtyListOfficeDto,
+    type: RealtyItemOfficeDto,
   })
-  office: RealtyListOfficeDto;
+  office: RealtyItemOfficeDto;
 
   @ApiPropertyOptional({
     description: '물건에 대한 통화 기록',
-    type: RealtyListCallHistoryDto,
+    type: RealtyItemCallHistoryDto,
   })
-  calls?: RealtyListCallHistoryDto[];
+  calls?: RealtyItemCallHistoryDto[];
 
   @ApiPropertyOptional()
   apart?: RealtyApartModel;
@@ -115,7 +115,7 @@ export class RealtyListDto {
   house?: RealtyHouseModel;
 
   @ApiPropertyOptional({
-    type: [RealtyListImageDto],
+    type: [RealtyItemImageDto],
   })
-  images?: RealtyListImageDto[];
+  images?: RealtyItemImageDto[];
 }

@@ -17,7 +17,7 @@ import { QueryRunner } from 'typeorm';
 import { TransactionInterceptor } from 'src/interceptor/transaction.interceptor';
 import { ResponseDto } from 'src/dto/auth/auth-reponse.dto';
 import { Jwt } from 'src/decorator/jwt.decorator';
-import { RealtyListDto } from 'src/dto/realty/realty-list.dto';
+import { RealtyItemDto } from 'src/dto/realty/realty-list.dto';
 import {
   ApiBaseResponse,
   ApiPaginateResponse,
@@ -26,33 +26,59 @@ import { BasePaginateDto } from 'src/dto/paginate.dto';
 import { RealtyModel } from 'src/entity/realty/realty.entity';
 import { RealtyUpdateDto } from 'src/dto/realty/realty-update.dto';
 import { RealtyDetailDto } from 'src/dto/realty/realty-detail.dto';
+import { CommonService } from '../common/common.service';
+import { UploadTypeRole } from 'src/common/constant/enum.constant';
+import { BaseResponseDto } from 'src/dto/base-response.dto';
+import { UploadFileModel } from 'src/entity/upload-file.entity';
 
 @Controller('realty')
 @ApiTags('REALTY')
 export class RealtyController {
-  constructor(private readonly realtyService: RealtyService) {}
+  constructor(
+    private readonly realtyService: RealtyService,
+    private readonly commonServer: CommonService,
+  ) {}
 
   @Post()
   @UseInterceptors(TransactionInterceptor)
   @ApiOperation({
     summary: '부동산 매물 등록',
   })
-  @ApiOkResponse({
-    type: ResponseDto,
-    description: '부동산 매물 등록 성공',
-  })
+  @ApiBaseResponse(RealtyItemDto, '부동산 매물 등록 성공')
   async postRealty(
     @Jwt('uid') uid: string,
     @Body() dto: RealtyRegistDto,
     @QR() qr: QueryRunner,
-  ) {
+  ): Promise<BaseResponseDto<RealtyItemDto> | ResponseDto> {
     try {
       const result = await this.realtyService.registRealty(uid, dto, qr);
+
+      const images: UploadFileModel[] = [];
+
+      if (dto.images.length) {
+        for (let i = 0; i < dto.images.length; i++) {
+          const image = await this.commonServer.uploadImageSave(
+            {
+              order: i,
+              size: dto.images[i].size,
+              path: dto.images[i].path,
+              type: UploadTypeRole.REALTY,
+            },
+            result.uid,
+            qr,
+          );
+
+          images.push(image);
+        }
+      }
 
       return {
         message: '매물 등록 성공',
         statusCode: HttpStatus.OK,
-        data: result,
+        data: {
+          ...result,
+          images,
+        },
       };
     } catch (e) {
       console.log(e);
@@ -68,7 +94,7 @@ export class RealtyController {
   @ApiOperation({
     summary: '부동산 매물 목록',
   })
-  @ApiPaginateResponse(RealtyListDto, '부동산 매물 목록 호출 성공')
+  @ApiPaginateResponse(RealtyItemDto, '부동산 매물 목록 호출 성공')
   async getRealtyList(@Query() dto: BasePaginateDto<RealtyModel>) {
     const result = await this.realtyService.realtyList(dto);
 

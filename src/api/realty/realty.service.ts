@@ -109,7 +109,7 @@ export class RealtyService {
     }
 
     return {
-      realty,
+      ...realty,
       apart: dto.typeRole === RealtyTypeRole.APART ? etc : undefined,
       house: dto.typeRole === RealtyTypeRole.HOUSE ? etc : undefined,
       store: dto.typeRole === RealtyTypeRole.STORE ? etc : undefined,

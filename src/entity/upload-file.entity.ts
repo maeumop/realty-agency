@@ -18,13 +18,11 @@ export class UploadFileModel extends BaseModel {
   @Column({
     default: 0,
   })
-  @ApiProperty()
   order: number;
 
   @Column({
     enum: UploadTypeRole,
   })
-  @ApiProperty()
   type: UploadTypeRole;
 
   @Column({
@@ -41,6 +39,10 @@ export class UploadFileModel extends BaseModel {
   })
   @ApiProperty()
   path: string;
+
+  @Column()
+  @ApiProperty()
+  fileSize: number;
 
   @OneToOne(() => MemberModel, (model) => model.profile, { nullable: true })
   @JoinColumn()

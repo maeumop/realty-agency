@@ -1,4 +1,15 @@
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { ValidationArguments } from 'class-validator';
+import { diskStorage } from 'multer';
+import { v4 as uuid } from 'uuid';
+import * as fs from 'fs';
+import {
+  PROFILE_UPLOAD_PATH,
+  REALTY_UPLOAD_PATH,
+  TEMP_PATH,
+  UPLOAD_PATH,
+} from './constant/path.constant';
+import { extname } from 'path';
 
 export class Util {
   static validatorMsg(args: ValidationArguments, type?: string) {
@@ -34,7 +45,36 @@ export class Util {
     return message;
   }
 
-  // static objectKeys<T>(obj: object): keyof T {
-  //   return Object.keys(obj);
-  // }
+  static uploadOption(): MulterOptions {
+    return {
+      storage: diskStorage({
+        destination: async (req, file, callback) => {
+          // 업로드 관련된 폴더가 있는지 검수 하고 없을 경우 생성한다.
+          if (!fs.existsSync(UPLOAD_PATH)) {
+            await fs.mkdirSync(UPLOAD_PATH);
+          }
+
+          if (!fs.existsSync(TEMP_PATH)) {
+            await fs.mkdirSync(TEMP_PATH);
+          }
+
+          if (!fs.existsSync(PROFILE_UPLOAD_PATH)) {
+            await fs.mkdirSync(PROFILE_UPLOAD_PATH);
+          }
+
+          if (!fs.existsSync(REALTY_UPLOAD_PATH)) {
+            await fs.mkdirSync(REALTY_UPLOAD_PATH);
+          }
+
+          // 임시 저장 폴더 반환
+          callback(null, TEMP_PATH);
+        },
+        filename: (req, file, callback) => {
+          // 파일을 고유한 이름으로 바꾸고, 임시 저장 폴더에 저장한다.
+          const fileName = uuid() + extname(file.originalname);
+          callback(null, fileName);
+        },
+      }),
+    };
+  }
 }
