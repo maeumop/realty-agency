@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsString, Length, MinLength } from 'class-validator';
 import { UserRole } from 'src/common/constant/enum.constant';
 import { Util } from 'src/common/util';
+import { UploadImageDto } from '../update-image.dto';
 
 export class RegisterMemberDto {
   @ApiProperty()
@@ -61,5 +62,5 @@ export class RegisterMemberDto {
   role: UserRole;
 
   @ApiPropertyOptional()
-  profile: string;
+  profile: UploadImageDto;
 }

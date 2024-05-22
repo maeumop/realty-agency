@@ -3,7 +3,6 @@ import { basename, join } from 'path';
 import {
   PROFILE_UPLOAD_PATH,
   REALTY_UPLOAD_PATH,
-  TEMP_PATH,
 } from 'src/common/constant/path.constant';
 import { BasePaginateDto, PaginateDataDto } from 'src/dto/paginate.dto';
 import { UploadImageDto } from 'src/dto/update-image.dto';
@@ -46,8 +45,10 @@ export class CommonService {
     const order: FindOptionsOrder<T> = {};
     let skip: number;
 
+    console.log(dto);
+
     if (dto.order && dto.orderField) {
-      order[dto.orderField.toString()] = dto.order;
+      order[dto.orderField.toString()] = !dto.order ? 'DESC' : dto.order;
     }
 
     if (dto.page) {
@@ -92,7 +93,7 @@ export class CommonService {
     uid: string,
     qr?: QueryRunner,
   ): Promise<UploadFileModel> {
-    const tempImgPath = join(TEMP_PATH, dto.path);
+    const tempImgPath = dto.path;
 
     try {
       await promises.access(tempImgPath);
@@ -110,6 +111,7 @@ export class CommonService {
 
     const result = await this.getRepository(qr).save({
       ...dto,
+      path: fileName,
       realty:
         dto.type === UploadTypeRole.REALTY
           ? {

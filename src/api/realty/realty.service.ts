@@ -139,6 +139,7 @@ export class RealtyService {
           store: true,
           ticket: true,
           member: true,
+          images: true,
         },
       },
     );

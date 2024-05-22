@@ -50,44 +50,35 @@ export class RealtyController {
     @Body() dto: RealtyRegistDto,
     @QR() qr: QueryRunner,
   ): Promise<BaseResponseDto<RealtyItemDto> | ResponseDto> {
-    try {
-      const result = await this.realtyService.registRealty(uid, dto, qr);
+    const result = await this.realtyService.registRealty(uid, dto, qr);
 
-      const images: UploadFileModel[] = [];
+    const images: UploadFileModel[] = [];
 
-      if (dto.images.length) {
-        for (let i = 0; i < dto.images.length; i++) {
-          const image = await this.commonServer.uploadImageSave(
-            {
-              order: i,
-              size: dto.images[i].size,
-              path: dto.images[i].path,
-              type: UploadTypeRole.REALTY,
-            },
-            result.uid,
-            qr,
-          );
+    if (dto.images.length) {
+      for (let i = 0; i < dto.images.length; i++) {
+        const image = await this.commonServer.uploadImageSave(
+          {
+            order: i,
+            fileSize: dto.images[i].size,
+            path: dto.images[i].path,
+            type: UploadTypeRole.REALTY,
+          },
+          result.uid,
+          qr,
+        );
 
-          images.push(image);
-        }
+        images.push(image);
       }
-
-      return {
-        message: '매물 등록 성공',
-        statusCode: HttpStatus.OK,
-        data: {
-          ...result,
-          images,
-        },
-      };
-    } catch (e) {
-      console.log(e);
-
-      return {
-        message: e,
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      };
     }
+
+    return {
+      message: '매물 등록 성공',
+      statusCode: HttpStatus.OK,
+      data: {
+        ...result,
+        images,
+      },
+    };
   }
 
   @Get()

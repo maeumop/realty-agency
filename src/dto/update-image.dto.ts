@@ -23,5 +23,5 @@ export class UploadImageDto {
 
   @ApiProperty()
   @IsInt()
-  size: number;
+  fileSize: number;
 }

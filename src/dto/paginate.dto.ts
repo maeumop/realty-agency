@@ -27,10 +27,11 @@ export class BasePaginateDto<T extends BaseModel> {
   order?: FindOptionsOrderValue = 'DESC';
 
   @ApiPropertyOptional({
-    description: '정렬 가능한 필드명',
+    description: '정렬 가능한 필드명 (필드명이 안맞을 경우 오류 발생)',
+    default: 'createDate',
   })
   @IsOptional()
-  orderField?: string;
+  orderField?: string = 'createDate';
 
   @ApiPropertyOptional({
     default: 20,

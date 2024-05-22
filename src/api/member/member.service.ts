@@ -22,27 +22,13 @@ export class MemberService {
     private readonly commonSerivce: CommonService,
   ) {}
 
-  async registerMember(body: RegisterMemberDto, pwd: string) {
-    const {
-      officeUid,
-      userId,
-      email,
-      userName,
-      personalPhone,
-      officePhone,
-      birthday,
-      role,
-    } = body;
+  async registerMember(dto: RegisterMemberDto, pwd: string) {
+    // 객체 디스트럭처링으로 officeUid만 제거
+    const { officeUid, ...newValues } = dto;
 
     const result = await this.repository.save({
-      userId,
-      email,
-      userName,
+      ...newValues,
       pwd,
-      personalPhone,
-      officePhone,
-      birthday,
-      role,
       office: {
         uid: officeUid,
       },
